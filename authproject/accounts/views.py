@@ -7,7 +7,7 @@ from django.contrib import messages
 from .models import Product, Cart, CartItem, Order, OrderItem
 
 
-# 🔐 LOGIN (EMAIL BASED)
+#  LOGIN (EMAIL BASED)
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('username')
@@ -30,7 +30,7 @@ def login_view(request):
     return render(request, 'login.html')
 
 
-# 📝 SIGNUP
+#  SIGNUP
 def signup_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -54,13 +54,13 @@ def signup_view(request):
     return render(request, 'signup.html')
 
 
-# 🚪 LOGOUT
+#  LOGOUT
 def logout_view(request):
     logout(request)
     return redirect('login')
 
 
-# 📊 DASHBOARD
+#  DASHBOARD
 @login_required
 def dashboard_view(request):
     query = request.GET.get('q')
@@ -76,7 +76,7 @@ def dashboard_view(request):
     })
 
 
-# 🛒 ADD TO CART
+#  ADD TO CART
 @login_required
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -92,7 +92,7 @@ def add_to_cart(request, product_id):
     return redirect('cart')
 
 
-# 🛒 CART VIEW
+#  CART VIEW
 @login_required
 def cart_view(request):
     cart, _ = Cart.objects.get_or_create(user=request.user)
@@ -109,7 +109,7 @@ def cart_view(request):
     })
 
 
-# ➕ INCREASE
+#  INCREASE
 @login_required
 def increase_quantity(request, item_id):
     item = get_object_or_404(CartItem, id=item_id)
@@ -118,7 +118,7 @@ def increase_quantity(request, item_id):
     return redirect('cart')
 
 
-# ➖ DECREASE
+#  DECREASE
 @login_required
 def decrease_quantity(request, item_id):
     item = get_object_or_404(CartItem, id=item_id)
@@ -140,7 +140,7 @@ def remove_item(request, item_id):
     return redirect('cart')
 
 
-# 💳 CHECKOUT (UPDATED WITH ADDRESS + PHONE)
+#  CHECKOUT (UPDATED WITH ADDRESS + PHONE)
 @login_required
 def checkout(request):
     cart = Cart.objects.get(user=request.user)
@@ -151,7 +151,7 @@ def checkout(request):
 
     total = sum(item.product.price * item.quantity for item in items)
 
-    # 👉 If form submitted
+    #  If form submitted
     if request.method == 'POST':
         address = request.POST.get('address')
         phone = request.POST.get('phone')
@@ -162,35 +162,29 @@ def checkout(request):
             address=address,
             phone=phone
         )
-
         for item in items:
             OrderItem.objects.create(
                 order=order,
                 product=item.product,
                 quantity=item.quantity
             )
-
         items.delete()
-
         messages.success(request, "Order placed successfully (Cash on Delivery)!")
-
         return redirect('orders')
-
     #  Show checkout form
     return render(request, 'checkout.html', {
         'items': items,
         'total': total
     })
 
-
-# 📦 ORDER LIST
+#  ORDER LIST
 @login_required
 def orders_view(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'orders.html', {'orders': orders})
 
 
-# 📦 ORDER DETAIL
+#  ORDER DETAIL
 @login_required
 def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)

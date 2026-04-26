@@ -37,20 +37,6 @@ venv.bak/
 
 .idea/
 
-# Mac / Linux
-
-.DS_Store
-
-# Windows
-
-Thumbs.db
-
-# Migrations (optional - only if you want to ignore them)
-
-# **/migrations/
-
-# !**/migrations/**init**.py
-
 # Testing / coverage
 
 .coverage
