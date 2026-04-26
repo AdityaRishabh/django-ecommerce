@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f6f9;
+        }
+
+        .navbar {
+            background: linear-gradient(90deg, #4e54c8, #8f94fb);
+        }
+
+        .card {
+            border-radius: 15px;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .btn-custom {
+            background: #4e54c8;
+            color: white;
+        }
+
+        .btn-custom:hover {
+            background: #3d42a5;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark px-4">
+    <a href="{% url 'dashboard' %}" class="navbar-brand">🛒 MyStore</a>
+
+    <div>
+        <a href="{% url 'cart' %}" class="btn btn-light me-2">Cart</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+
+<div class="row">
+
+    <!-- 📦 ORDER SUMMARY -->
+    <div class="col-md-6">
+        <div class="card shadow p-4">
+            <h4 class="mb-3">Order Summary</h4>
+
+            <table class="table">
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                </tr>
+
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹ {{ item.product.price }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <h5 class="text-end mt-3">
+                Total: <span class="price">₹ {{ total }}</span>
+            </h5>
+        </div>
+    </div>
+
+    <!-- 🏠 ADDRESS FORM -->
+    <div class="col-md-6">
+        <div class="card shadow p-4">
+
+            <h4 class="mb-3">Delivery Details</h4>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Address -->
+                <div class="mb-3">
+                    <label class="form-label">Delivery Address</label>
+                    <textarea name="address" class="form-control" rows="4" placeholder="Enter full address..." required></textarea>
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-3">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" name="phone" class="form-control" placeholder="Enter phone number" required>
+                </div>
+
+                <!-- Payment -->
+                <div class="mb-3">
+                    <label class="form-label">Payment Method</label>
+                    <input type="text" class="form-control" value="Cash on Delivery" disabled>
+                </div>
+
+                <button type="submit" class="btn btn-custom w-100">
+                    Place Order
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+</body>
+</html>

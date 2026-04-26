@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body { background: #f4f6f9; }
+
+        .navbar {
+            background: linear-gradient(90deg, #4e54c8, #8f94fb);
+        }
+
+        .product-img {
+            height: 60px;
+            width: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .price {
+            color: green;
+            font-weight: bold;
+        }
+
+        .qty-btn {
+            padding: 4px 10px;
+        }
+
+        .table th {
+            background: #4e54c8;
+            color: white;
+        }
+
+        .total-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark px-4">
+    <a href="{% url 'dashboard' %}" class="navbar-brand">My Store</a>
+
+    <div>
+        <a href="{% url 'dashboard' %}" class="btn btn-light me-2">Dashboard</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+
+<h3 class="mb-4"> Your Cart</h3>
+
+<div class="card shadow p-4">
+
+<table class="table align-middle">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>
+                {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" class="product-img">
+                {% else %}
+                <img src="https://via.placeholder.com/60" class="product-img">
+                {% endif %}
+            </td>
+
+            <td class="fw-bold">{{ item.product.name }}</td>
+
+            <td>
+                <a href="{% url 'decrease' item.id %}" class="btn btn-danger btn-sm qty-btn">-</a>
+                <span class="mx-2">{{ item.quantity }}</span>
+                <a href="{% url 'increase' item.id %}" class="btn btn-success btn-sm qty-btn">+</a>
+            </td>
+
+            <td class="price">
+                ₹ {{ item.subtotal }}
+            </td>
+
+            <td>
+                <a href="{% url 'remove' item.id %}" class="btn btn-dark btn-sm">Remove</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" class="text-center">Cart is empty</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</div>
+
+<!-- TOTAL -->
+<div class="total-box mt-4 shadow">
+    <h4>Total: <span class="price">₹ {{ total }}</span></h4>
+
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-2">Continue Shopping</a>
+    <a href="{% url 'checkout' %}" class="btn btn-primary mt-2">
+        Place Order (Cash on Delivery)
+    </a>
+</div>
+
+</div>
+
+</body>
+</html>
