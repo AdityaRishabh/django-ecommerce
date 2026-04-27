@@ -3,21 +3,27 @@ from .models import Product, CartItem, Order, OrderItem
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(required=False)
+
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = ['id', 'name', 'description', 'price', 'stock', 'image']
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product_name = serializers.CharField(source='product.name')
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    subtotal = serializers.SerializerMethodField()
 
     class Meta:
         model = CartItem
-        fields = ['id', 'product', 'product_name', 'quantity']
+        fields = ['id', 'product', 'product_name', 'quantity', 'subtotal']
+
+    def get_subtotal(self, obj):
+        return obj.product.price * obj.quantity
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product_name = serializers.CharField(source='product.name')
+    product_name = serializers.CharField(source='product.name', read_only=True)
 
     class Meta:
         model = OrderItem
@@ -29,4 +35,4 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'total_amount', 'status', 'created_at', 'items']
+        fields = ['id', 'total_amount', 'status', 'address', 'phone', 'created_at', 'items']
