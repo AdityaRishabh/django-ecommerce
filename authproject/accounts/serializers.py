@@ -1,14 +1,12 @@
 from rest_framework import serializers
 from .models import Product, CartItem, Order, OrderItem
 
-
 class ProductSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required=False)
 
     class Meta:
         model = Product
         fields = ['id', 'name', 'description', 'price', 'stock', 'image']
-
 
 class CartItemSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source='product.name', read_only=True)
