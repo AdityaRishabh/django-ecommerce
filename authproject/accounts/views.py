@@ -15,7 +15,7 @@ from .serializers import ProductSerializer, CartItemSerializer, OrderSerializer
 
 
 # =========================
-# 🔐 AUTH (EMAIL LOGIN)
+# 🔐 AUTH (EMAIL OR USERNAME LOGIN)
 # =========================
 
 def login_view(request):
@@ -51,8 +51,12 @@ def signup_view(request):
             messages.error(request, "Email already exists")
             return redirect('signup')
 
-        # username = part before @
+        # username = before @
         username = email.split('@')[0]
+
+        # avoid duplicate username
+        if User.objects.filter(username=username).exists():
+            username = username + str(User.objects.count())
 
         User.objects.create_user(
             username=username,
