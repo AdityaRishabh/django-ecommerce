@@ -13,10 +13,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from .serializers import ProductSerializer, CartItemSerializer, OrderSerializer
 
-
-# =========================
-# 🔐 AUTH (EMAIL OR USERNAME LOGIN)
-# =========================
+#  AUTH (EMAIL LOGIN)
 
 def login_view(request):
     if request.method == 'POST':
@@ -76,10 +73,7 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
-
-# =========================
-# 🏠 DASHBOARD
-# =========================
+#  DASHBOARD
 
 @login_required
 def dashboard_view(request):
@@ -96,9 +90,7 @@ def dashboard_view(request):
     })
 
 
-# =========================
-# 🛒 CART (WEB)
-# =========================
+# CART (WEB)
 
 @login_required
 def add_to_cart(request, product_id):
@@ -110,7 +102,6 @@ def add_to_cart(request, product_id):
     if not created:
         item.quantity += 1
         item.save()
-
     return redirect('cart')
 
 
@@ -121,7 +112,6 @@ def cart_view(request):
 
     for item in items:
         item.subtotal = item.product.price * item.quantity
-
     total = sum(item.subtotal for item in items)
 
     return render(request, 'cart.html', {
@@ -147,7 +137,6 @@ def decrease_quantity(request, item_id):
         item.save()
     else:
         item.delete()
-
     return redirect('cart')
 
 
@@ -157,10 +146,7 @@ def remove_item(request, item_id):
     item.delete()
     return redirect('cart')
 
-
-# =========================
-# 💳 CHECKOUT
-# =========================
+#  CHECKOUT
 
 @login_required
 def checkout(request):
@@ -175,12 +161,14 @@ def checkout(request):
     if request.method == 'POST':
         address = request.POST.get('address')
         phone = request.POST.get('phone')
+        pincode = request.POST.get('pincode')   
 
         order = Order.objects.create(
             user=request.user,
             total_amount=total,
             address=address,
-            phone=phone
+            phone=phone,
+            pincode=pincode   
         )
 
         for item in items:
@@ -200,9 +188,7 @@ def checkout(request):
     })
 
 
-# =========================
-# 📦 ORDERS
-# =========================
+#  ORDERS
 
 @login_required
 def orders_view(request):
@@ -221,9 +207,7 @@ def order_detail(request, order_id):
     })
 
 
-# =========================
-# 🔗 PRODUCT APIs
-# =========================
+#  PRODUCT APIs
 
 @api_view(['GET'])
 def api_products(request):
@@ -265,9 +249,8 @@ def api_delete_product(request, pk):
     return Response({"message": "Product deleted"})
 
 
-# =========================
-# 🛒 CART APIs
-# =========================
+# CART APIs
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -321,9 +304,8 @@ def api_remove_cart(request, item_id):
     return Response({"message": "Removed"})
 
 
-# =========================
-# 📦 ORDER APIs
-# =========================
+# ORDER APIs
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

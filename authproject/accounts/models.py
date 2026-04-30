@@ -45,6 +45,7 @@ class Order(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     address = models.TextField(default="Not Available")
     phone = models.CharField(max_length=15, default="0000000000")
+    pincode = models.CharField(max_length=10, default="000000")
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
 

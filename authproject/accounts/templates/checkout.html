@@ -50,7 +50,7 @@
 
 <div class="row">
 
-    <!-- 📦 ORDER SUMMARY -->
+    <!--  ORDER SUMMARY -->
     <div class="col-md-6">
         <div class="card shadow p-4">
             <h4 class="mb-3">Order Summary</h4>
@@ -70,52 +70,56 @@
                 </tr>
                 {% endfor %}
             </table>
-
             <h5 class="text-end mt-3">
                 Total: <span class="price">₹ {{ total }}</span>
             </h5>
         </div>
     </div>
 
-    <!-- 🏠 ADDRESS FORM -->
+    <!--  ADDRESS FORM -->
     <div class="col-md-6">
         <div class="card shadow p-4">
-
             <h4 class="mb-3">Delivery Details</h4>
-
             <form method="POST">
                 {% csrf_token %}
 
-                <!-- Address -->
-                <div class="mb-3">
-                    <label class="form-label">Delivery Address</label>
-                    <textarea name="address" class="form-control" rows="4" placeholder="Enter full address..." required></textarea>
-                </div>
-
-                <!-- Phone -->
-                <div class="mb-3">
-                    <label class="form-label">Phone Number</label>
-                    <input type="text" name="phone" class="form-control" placeholder="Enter phone number" required>
-                </div>
-
+    <div class="mb-3">
+    <label class="form-label fw-semibold">Address</label>
+    <textarea name="address" class="form-control shadow-sm" rows="3" placeholder="House No, Street, Area" required></textarea>
+</div>
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <label class="form-label fw-semibold">Pincode</label>
+        <input type="text" name="pincode" class="form-control shadow-sm" placeholder="6-digit pincode" required>
+    </div>
+    <div class="col-md-4 mb-3">
+        <label class="form-label fw-semibold">City</label>
+        <input type="text" name="city" class="form-control shadow-sm" placeholder="City" required>
+    </div>
+    <div class="col-md-4 mb-3">
+        <label class="form-label fw-semibold">State</label>
+        <input type="text" name="state" class="form-control shadow-sm" placeholder="State" required>
+    </div>
+</div>
+<div class="mb-3">
+    <label class="form-label fw-semibold">Address Type</label>
+    <div>
+        <input type="radio" name="address_type" value="Home" checked> Home
+        <input type="radio" name="address_type" value="Work" class="ms-3"> Work
+    </div>
+</div>
                 <!-- Payment -->
                 <div class="mb-3">
                     <label class="form-label">Payment Method</label>
                     <input type="text" class="form-control" value="Cash on Delivery" disabled>
                 </div>
-
                 <button type="submit" class="btn btn-custom w-100">
                     Place Order
                 </button>
-
             </form>
-
         </div>
     </div>
-
 </div>
-
 </div>
-
 </body>
 </html>
