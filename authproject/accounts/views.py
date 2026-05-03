@@ -1,8 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth.models import User
 
 from .models import Product, Cart, CartItem, Order, OrderItem
 
@@ -13,22 +12,21 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from .serializers import ProductSerializer, CartItemSerializer, OrderSerializer
 
-#  AUTH (EMAIL LOGIN)
+User = get_user_model()
+
+
+# AUTH (EMAIL LOGIN ONLY)
+
 
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        try:
-            user_obj = User.objects.get(email=email)
-            username = user_obj.username
-        except User.DoesNotExist:
-            username = None
+    
+        user = authenticate(request, username=email, password=password)
 
-        user = authenticate(request, username=username, password=password)
-
-        if user:
+        if user is not None:
             login(request, user)
             return redirect('dashboard')
         else:
@@ -48,15 +46,7 @@ def signup_view(request):
             messages.error(request, "Email already exists")
             return redirect('signup')
 
-        # username = before @
-        username = email.split('@')[0]
-
-        # avoid duplicate username
-        if User.objects.filter(username=username).exists():
-            username = username + str(User.objects.count())
-
         User.objects.create_user(
-            username=username,
             email=email,
             password=password,
             first_name=first_name,
@@ -73,7 +63,8 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
-#  DASHBOARD
+
+# DASHBOARD
 
 @login_required
 def dashboard_view(request):
@@ -90,7 +81,7 @@ def dashboard_view(request):
     })
 
 
-# CART (WEB)
+#  CART (WEB)
 
 @login_required
 def add_to_cart(request, product_id):
@@ -102,6 +93,7 @@ def add_to_cart(request, product_id):
     if not created:
         item.quantity += 1
         item.save()
+
     return redirect('cart')
 
 
@@ -112,6 +104,7 @@ def cart_view(request):
 
     for item in items:
         item.subtotal = item.product.price * item.quantity
+
     total = sum(item.subtotal for item in items)
 
     return render(request, 'cart.html', {
@@ -137,6 +130,7 @@ def decrease_quantity(request, item_id):
         item.save()
     else:
         item.delete()
+
     return redirect('cart')
 
 
@@ -146,8 +140,8 @@ def remove_item(request, item_id):
     item.delete()
     return redirect('cart')
 
-#  CHECKOUT
 
+#  CHECKOUT
 @login_required
 def checkout(request):
     cart = Cart.objects.get(user=request.user)
@@ -161,14 +155,18 @@ def checkout(request):
     if request.method == 'POST':
         address = request.POST.get('address')
         phone = request.POST.get('phone')
-        pincode = request.POST.get('pincode')   
+        pincode = request.POST.get('pincode')
+
+        if not address or not phone or not pincode:
+            messages.error(request, "All fields are required!")
+            return redirect('checkout')
 
         order = Order.objects.create(
             user=request.user,
             total_amount=total,
             address=address,
             phone=phone,
-            pincode=pincode   
+            pincode=pincode
         )
 
         for item in items:
@@ -186,7 +184,6 @@ def checkout(request):
         'items': items,
         'total': total
     })
-
 
 #  ORDERS
 
@@ -206,15 +203,14 @@ def order_detail(request, order_id):
         'items': items
     })
 
-
 #  PRODUCT APIs
+
 
 @api_view(['GET'])
 def api_products(request):
     products = Product.objects.all()
     serializer = ProductSerializer(products, many=True)
     return Response(serializer.data)
-
 
 @api_view(['POST'])
 @permission_classes([IsAdminUser])
@@ -249,8 +245,7 @@ def api_delete_product(request, pk):
     return Response({"message": "Product deleted"})
 
 
-# CART APIs
-
+#  CART APIs
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -303,8 +298,7 @@ def api_remove_cart(request, item_id):
     item.delete()
     return Response({"message": "Removed"})
 
-
-# ORDER APIs
+#  ORDER APIs
 
 
 @api_view(['GET'])
