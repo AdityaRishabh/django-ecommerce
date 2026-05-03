@@ -20,6 +20,16 @@
             border-radius: 15px;
             background: white;
         }
+
+        .signup-text {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .signup-text a {
+            text-decoration: none;
+            font-weight: 500;
+        }
     </style>
 </head>
 
@@ -46,6 +56,14 @@
 
         <button type="submit" class="btn btn-primary w-100">Login</button>
     </form>
+
+    <!-- SIGNUP LINK -->
+    <div class="signup-text">
+        <p class="mb-0">
+            Don't have an account? 
+            <a href="{% url 'signup' %}">Signup</a>
+        </p>
+    </div>
 
 </div>
 

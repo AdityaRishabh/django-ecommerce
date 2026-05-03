@@ -77,7 +77,7 @@
         </div>
     </div>
 
-    <!-- ADDRESS FORM -->
+    <!-- DELIVERY DETAILS -->
     <div class="col-md-6">
         <div class="card shadow p-4">
             <h4 class="mb-3">Delivery Details</h4>
@@ -85,31 +85,61 @@
             <form method="POST">
                 {% csrf_token %}
 
-                <!-- ✅ FIX: hidden phone (prevents DB error) -->
-                <input type="hidden" name="phone" value="9999999999">
+                <!--  SAVED ADDRESSES -->
+                {% if addresses %}
+                <h6 class="mb-2">Saved Addresses</h6>
 
+                {% for addr in addresses %}
+                <div class="card p-2 mb-2">
+                    <label>
+                        <input type="radio" name="selected_address"
+                        value="{{ addr.id }}"
+                        onclick="fillAddress('{{ addr.address }}','{{ addr.phone }}','{{ addr.pincode }}','{{ addr.city }}','{{ addr.state }}')">
+
+                        <b>{{ addr.full_name }}</b> ({{ addr.address_type }})<br>
+                        {{ addr.address }}, {{ addr.city }}, {{ addr.state }} - {{ addr.pincode }}<br>
+                        {{ addr.phone }}
+                    </label>
+                </div>
+                {% endfor %}
+
+                <hr>
+                <h6>Add New Address</h6>
+                {% endif %}
+
+                <!-- Address -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Address</label>
-                    <textarea name="address" class="form-control shadow-sm" rows="3" placeholder="House No, Street, Area" required></textarea>
+                    <textarea id="address" name="address" class="form-control shadow-sm" rows="3"
+                        placeholder="House No, Street, Area" required></textarea>
                 </div>
 
+                <!-- Phone -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Phone Number</label>
+                    <input id="phone" type="text" name="phone" class="form-control shadow-sm"
+                    placeholder="Enter mobile number" required>
+                </div>
+
+                <!-- Pincode / City / State -->
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-semibold">Pincode</label>
-                        <input type="text" name="pincode" class="form-control shadow-sm" placeholder="6-digit pincode" required>
+                        <input id="pincode" type="text" name="pincode" class="form-control shadow-sm" required>
                     </div>
 
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-semibold">City</label>
-                        <input type="text" name="city" class="form-control shadow-sm" placeholder="City" required>
+                        <input id="city" type="text" name="city" class="form-control shadow-sm" required>
                     </div>
 
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-semibold">State</label>
-                        <input type="text" name="state" class="form-control shadow-sm" placeholder="State" required>
+                        <input id="state" type="text" name="state" class="form-control shadow-sm" required>
                     </div>
                 </div>
 
+                <!-- Address Type -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Address Type</label>
                     <div>
@@ -134,6 +164,17 @@
 
 </div>
 </div>
+
+<!--  AUTO-FILL  -->
+<script>
+function fillAddress(address, phone, pincode, city, state) {
+    document.getElementById("address").value = address;
+    document.getElementById("phone").value = phone;
+    document.getElementById("pincode").value = pincode;
+    document.getElementById("city").value = city;
+    document.getElementById("state").value = state;
+}
+</script>
 
 </body>
 </html>

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
+from .models import Address
 from .models import Product, Cart, CartItem, Order, OrderItem
 
 # DRF
@@ -142,6 +142,8 @@ def remove_item(request, item_id):
 
 
 #  CHECKOUT
+
+
 @login_required
 def checkout(request):
     cart = Cart.objects.get(user=request.user)
@@ -152,15 +154,43 @@ def checkout(request):
 
     total = sum(item.product.price * item.quantity for item in items)
 
+    #  GET SAVED ADDRESSES
+    addresses = Address.objects.filter(user=request.user)
+
     if request.method == 'POST':
-        address = request.POST.get('address')
-        phone = request.POST.get('phone')
-        pincode = request.POST.get('pincode')
+        selected_address_id = request.POST.get('selected_address')
 
-        if not address or not phone or not pincode:
-            messages.error(request, "All fields are required!")
-            return redirect('checkout')
+        #  If user selects saved address
+        if selected_address_id:
+            selected_address = Address.objects.get(id=selected_address_id)
 
+            address = selected_address.address
+            phone = selected_address.phone
+            pincode = selected_address.pincode
+
+        else:
+        
+            address = request.POST.get('address')
+            phone = request.POST.get('phone')
+            pincode = request.POST.get('pincode')
+            city = request.POST.get('city')
+            state = request.POST.get('state')
+            address_type = request.POST.get('address_type')
+
+#  SAVE NEW ADDRESS
+            Address.objects.create(
+                user=request.user,
+                full_name=request.user.email,
+                phone=phone,
+                address=address,
+                city=city,
+                state=state,
+                pincode=pincode,
+                address_type=address_type,
+                is_default=False
+            )
+
+#  CREATE ORDER
         order = Order.objects.create(
             user=request.user,
             total_amount=total,
@@ -177,14 +207,14 @@ def checkout(request):
             )
 
         items.delete()
-        messages.success(request, "Order placed successfully (COD)!")
+        messages.success(request, "Order placed successfully!")
         return redirect('orders')
 
     return render(request, 'checkout.html', {
         'items': items,
-        'total': total
+        'total': total,
+        'addresses': addresses
     })
-
 #  ORDERS
 
 @login_required
