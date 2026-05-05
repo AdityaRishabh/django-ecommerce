@@ -3,6 +3,9 @@ from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, Product, Cart, CartItem, Order, OrderItem
 from .models import Address
 
+from import_export.admin import ImportExportModelAdmin
+
+
 #  CUSTOM USER ADMIN
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
@@ -24,10 +27,13 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
+class ProductAdmin(ImportExportModelAdmin):
+    list_display = ('name', 'price', 'stock')
+
 
 #  REGISTER 
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Product)
+admin.site.register(Product, ProductAdmin)  # ✅ updated
 admin.site.register(Cart)
 admin.site.register(CartItem)
 admin.site.register(Order)
