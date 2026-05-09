@@ -5,7 +5,6 @@ from .models import Address
 
 from import_export.admin import ImportExportModelAdmin
 
-
 #  CUSTOM USER ADMIN
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
@@ -33,7 +32,7 @@ class ProductAdmin(ImportExportModelAdmin):
 
 #  REGISTER 
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Product, ProductAdmin)  # ✅ updated
+admin.site.register(Product, ProductAdmin)  
 admin.site.register(Cart)
 admin.site.register(CartItem)
 admin.site.register(Order)
