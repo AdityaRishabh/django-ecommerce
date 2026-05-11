@@ -146,3 +146,4 @@ SIMPLE_JWT = {
 AUTHENTICATION_BACKENDS = [
     'accounts.backends.EmailBackend',
 ]
+

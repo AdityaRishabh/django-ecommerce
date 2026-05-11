@@ -6,18 +6,19 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
 
-    #  AUTH 
+    #  AUTH
 
     path('', views.login_view, name='home'),
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup_view, name='signup'),
     path('logout/', views.logout_view, name='logout'),
 
+    # 🤖 AI CHATBOT
+    path('ai-chat/', views.ai_chat, name='ai_chat'),
 
     #  DASHBOARD (UI)
 
     path('dashboard/', views.dashboard_view, name='dashboard'),
-
 
     #  CART (UI)
 
@@ -44,14 +45,13 @@ urlpatterns = [
     path('api/delete-product/<int:pk>/', views.api_delete_product, name='api_delete_product'),
 
     #  CART APIs
-    
+
     path('api/cart/', views.api_cart, name='api_cart'),
     path('api/add-to-cart/', views.api_add_to_cart, name='api_add_to_cart'),
     path('api/update-cart/<int:item_id>/', views.api_update_cart, name='api_update_cart'),
     path('api/remove-cart/<int:item_id>/', views.api_remove_cart, name='api_remove_cart'),
 
-    
     # ORDER APIs
-    
+
     path('api/orders/', views.api_orders, name='api_orders'),
 ]

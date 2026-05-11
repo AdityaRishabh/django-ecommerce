@@ -5,6 +5,12 @@ from django.contrib import messages
 from .models import Address
 from .models import Product, Cart, CartItem, Order, OrderItem
 
+import os 
+import cohere
+from django.http import JsonResponse
+
+co = cohere.Client(os.getenv("COHERE_API_KEY"))
+
 # DRF
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -337,3 +343,25 @@ def api_orders(request):
     orders = Order.objects.filter(user=request.user)
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
+
+# Ai chatbot
+
+def ai_chat(request):
+
+    question = request.GET.get('q')
+
+    try:
+
+        response = co.chat(
+            message=question
+        )
+
+        return JsonResponse({
+            'answer': response.text
+        })
+
+    except Exception as e:
+
+        return JsonResponse({
+            'answer': str(e)
+        })

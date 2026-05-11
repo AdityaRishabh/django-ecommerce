@@ -56,6 +56,91 @@
         .card-title {
             min-height: 50px;
         }
+
+        /* CHATBOT */
+
+        .chatbot-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: #4e54c8;
+            color: white;
+            font-size: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 999;
+        }
+
+        .chatbot-box {
+            position: fixed;
+            bottom: 100px;
+            right: 25px;
+            width: 360px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 999;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(90deg, #4e54c8, #8f94fb);
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .user-message {
+            background: #4e54c8;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: right;
+        }
+
+        .bot-message {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .chatbot-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            border: none;
+            padding: 15px;
+            outline: none;
+        }
+
+        .chatbot-input button {
+            border: none;
+            background: #4e54c8;
+            color: white;
+            padding: 15px 20px;
+        }
     </style>
 </head>
 
@@ -112,8 +197,6 @@
 
                 <div class="card shadow-sm p-3">
 
-                    <!-- PRODUCT IMAGE -->
-
                     {% if product.image %}
                         <img src="{{ product.image.url }}"
                             class="product-img w-100 mb-3">
@@ -128,31 +211,21 @@
 
                     {% endif %}
 
-                    <!-- PRODUCT NAME -->
-
                     <h6 class="fw-bold card-title">
                         {{ product.name }}
                     </h6>
-
-                    <!-- DESCRIPTION -->
 
                     <p class="description">
                         {{ product.description|default:"No description available"|truncatechars:60 }}
                     </p>
 
-                    <!-- PRICE -->
-
                     <p class="price">
                         ₹ {{ product.price }}
                     </p>
 
-                    <!-- STOCK -->
-
                     <p class="text-muted">
                         Stock: {{ product.stock }}
                     </p>
-
-                    <!-- BUTTON -->
 
                     <a href="{% url 'add_to_cart' product.id %}"
                     class="btn btn-custom w-100">
@@ -175,6 +248,89 @@
 
     </div>
 </div>
+
+<!-- AI CHATBOT -->
+
+<div class="chatbot-toggle" onclick="toggleChatbot()">
+    🤖
+</div>
+
+<div class="chatbot-box" id="chatbotBox">
+
+    <div class="chatbot-header">
+        AI Shopping Assistant
+    </div>
+
+    <div class="chatbot-messages" id="chatMessages">
+
+        <div class="bot-message">
+            Hi 👋 Ask me anything about shopping.
+        </div>
+
+    </div>
+
+    <div class="chatbot-input">
+
+        <input type="text"
+               id="userQuestion"
+               placeholder="Ask AI...">
+
+        <button onclick="askAI()">
+            Send
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+function toggleChatbot() {
+
+    let box = document.getElementById('chatbotBox');
+
+    if (box.style.display === 'flex') {
+        box.style.display = 'none';
+    }
+    else {
+        box.style.display = 'flex';
+    }
+}
+
+async function askAI() {
+
+    let input = document.getElementById('userQuestion');
+
+    let question = input.value;
+
+    if (question.trim() === '') {
+        return;
+    }
+
+    let messages = document.getElementById('chatMessages');
+
+    messages.innerHTML += `
+        <div class="user-message">
+            ${question}
+        </div>
+    `;
+
+    input.value = '';
+
+    let response = await fetch(`/ai-chat/?q=${question}`);
+
+    let data = await response.json();
+
+    messages.innerHTML += `
+        <div class="bot-message">
+            ${data.answer}
+        </div>
+    `;
+
+    messages.scrollTop = messages.scrollHeight;
+}
+
+</script>
 
 </body>
 </html>
