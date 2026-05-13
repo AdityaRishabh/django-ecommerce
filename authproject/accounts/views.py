@@ -80,12 +80,11 @@ def dashboard_view(request):
         products = Product.objects.filter(name__icontains=query)
     else:
         products = Product.objects.all()
-
-    return render(request, 'dashboard.html', {
+        return render(request, 'dashboard.html', {
         'products': products,
-        'query': query
-    })
+        'query': query,
 
+    })
 
 #  CART (WEB)
 
@@ -365,3 +364,5 @@ def ai_chat(request):
         return JsonResponse({
             'answer': str(e)
         })
+        
+        
