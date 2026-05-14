@@ -197,19 +197,21 @@
 
                 <div class="card shadow-sm p-3">
 
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}"
-                            class="product-img w-100 mb-3">
+                {% if product.image %}
+    <img src="{{ product.image.url }}"
+        class="product-img w-100 mb-3"
+        onerror="this.src='https://via.placeholder.com/300'">
 
-                    {% elif product.image_url %}
-                        <img src="{{ product.image_url }}"
-                            class="product-img w-100 mb-3">
+{% elif product.image_url %}
+    <img src="{{ product.image_url }}"
+        class="product-img w-100 mb-3"
+        referrerpolicy="no-referrer"
+        onerror="this.src='https://picsum.photos/300'">
 
-                    {% else %}
-                        <img src="https://via.placeholder.com/300"
-                            class="product-img w-100 mb-3">
-
-                    {% endif %}
+{% else %}
+    <img src="https://via.placeholder.com/300"
+        class="product-img w-100 mb-3">
+{% endif %}
 
                     <h6 class="fw-bold card-title">
                         {{ product.name }}

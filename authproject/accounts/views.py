@@ -19,6 +19,34 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .serializers import ProductSerializer, CartItemSerializer, OrderSerializer
 
 User = get_user_model()
+def get_context_from_db(user, query):
+    
+    # 1. Search products
+    products = Product.objects.filter(
+        name__icontains=query
+    )[:5]
+
+    # 2. Get user orders
+    orders = Order.objects.filter(user=user)[:3]
+
+    context = ""
+
+    # Add products to context
+    if products:
+        context += "Products available:\n"
+        for p in products:
+            context += f"- {p.name} (₹{p.price})\n"
+
+    # Add orders
+    if orders:
+        context += "\nUser recent orders:\n"
+        for o in orders:
+            context += f"- Order {o.id}, Amount ₹{o.total_amount}\n"
+
+    return context
+
+
+
 
 
 # AUTH (EMAIL LOGIN ONLY)
@@ -343,26 +371,117 @@ def api_orders(request):
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
 
-# Ai chatbot
+# Ai chatbot import 
+import re
+from django.http import JsonResponse
+from accounts.models import Product
+
 
 def ai_chat(request):
 
-    question = request.GET.get('q')
+    question = request.GET.get('q', '').lower()
 
-    try:
+    #  EXTRACT PRICE
+    price_match = re.search(r'(\d+)', question)
+    price = int(price_match.group(1)) if price_match else None
 
-        response = co.chat(
-            message=question
-        )
+    if 'k' in question and price:
+        price = price * 1000
 
-        return JsonResponse({
-            'answer': response.text
-        })
+    #  REGEX CATEGORY DETECTION
+    category = None
 
-    except Exception as e:
+    category_patterns = {
+        "mobile": r"\b(phone|mobile|smartphone)\b",
+        "laptop": r"\b(laptop|notebook)\b",
+        "fan": r"\b(fan|ceiling fan)\b",
+        "iron": r"\b(iron|press)\b",
+        "washing machine": r"\b(washing|washer|washing machine)\b",
+        "fridge": r"\b(fridge|refrigerator)\b"
+    }
 
-        return JsonResponse({
-            'answer': str(e)
-        })
-        
-        
+    for cat, pattern in category_patterns.items():
+        if re.search(pattern, question):
+            category = cat
+            break
+
+    #  BASE QUERY
+    if category:
+        products = Product.objects.filter(category__icontains=category)
+    else:
+        products = Product.objects.all()
+
+    #  PRICE FILTER
+    if "under" in question and price:
+        products = products.filter(price__lte=price)
+
+    elif "above" in question and price:
+        products = products.filter(price__gte=price)
+
+    #  KEYWORD DETECTION (AI FEEL)
+    keywords = []
+
+    if "battery" in question:
+        keywords.append("battery")
+
+    if "gaming" in question:
+        keywords.append("gaming")
+
+    if "camera" in question:
+        keywords.append("camera")
+
+    if "performance" in question:
+        keywords.append("i7")
+        keywords.append("ryzen")
+
+    #  AI SCORING
+    scored_products = []
+
+    for p in products:
+
+        score = 0
+
+        # cheaper = better
+        score += (100000 - int(p.price)) / 1000
+
+        # keyword boost
+        for kw in keywords:
+            if kw in (p.description or "").lower():
+                score += 20
+
+        # "best" boost
+        if "best" in question:
+            score += 10
+
+        scored_products.append((p, score))
+
+    #  SORTING + SINGLE RESULT LOGIC
+
+    if "cheapest" in question:
+        scored_products.sort(key=lambda x: x[0].price)
+        top_products = [scored_products[0][0]] if scored_products else []
+
+    elif "expensive" in question:
+        scored_products.sort(key=lambda x: x[0].price, reverse=True)
+        top_products = [scored_products[0][0]] if scored_products else []
+
+    else:
+        scored_products.sort(key=lambda x: x[1], reverse=True)
+        top_products = [p[0] for p in scored_products[:5]]
+
+    #  RESPONSE
+
+    if top_products:
+
+        if len(top_products) == 1:
+            p = top_products[0]
+            response = f"{p.name} is priced at ₹{p.price}"
+        else:
+            response = ""
+            for p in top_products:
+                response += f"{p.name} - ₹{p.price}<br>"
+
+        return JsonResponse({'answer': response})
+
+    else:
+        return JsonResponse({'answer': "No matching products found"})

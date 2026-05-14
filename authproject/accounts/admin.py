@@ -4,6 +4,7 @@ from .models import CustomUser, Product, Cart, CartItem, Order, OrderItem
 from .models import Address
 
 from import_export.admin import ImportExportModelAdmin
+from .resources import ProductResource  
 
 #  CUSTOM USER ADMIN
 class CustomUserAdmin(UserAdmin):
@@ -27,12 +28,13 @@ class CustomUserAdmin(UserAdmin):
     )
 
 class ProductAdmin(ImportExportModelAdmin):
-    list_display = ('name', 'price', 'stock')
+    resource_class = ProductResource   
+    list_display = ('name', 'price', 'stock','category')
 
 
 #  REGISTER 
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Product, ProductAdmin)  
+admin.site.register(Product, ProductAdmin)
 admin.site.register(Cart)
 admin.site.register(CartItem)
 admin.site.register(Order)
