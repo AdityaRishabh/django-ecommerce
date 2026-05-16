@@ -7,30 +7,63 @@
 
     <style>
         body {
-            background: #f4f6f9;
+            background: #f1f3f6;
+            font-family: Arial, sans-serif;
         }
 
+        /* NAVBAR */
         .navbar {
-            background: linear-gradient(90deg, #4e54c8, #8f94fb);
+            background: #2874f0;
+            padding: 10px 20px;
         }
 
-        .card {
-            border-radius: 15px;
-        }
-
-        .price {
+        .navbar-brand {
             font-weight: bold;
-            color: #28a745;
-        }
-
-        .btn-custom {
-            background: #4e54c8;
             color: white;
         }
 
-        .btn-custom:hover {
-            background: #3d42a5;
+        /* CARD */
+        .card {
+            border: none;
+            border-radius: 8px;
+            background: white;
         }
+
+        /* PRICE */
+        .price {
+            font-weight: bold;
+            color: #388e3c;
+        }
+
+        /* BUTTON */
+        .btn-custom {
+            background: #fb641b;
+            color: white;
+            border: none;
+        }
+
+        .btn-custom:hover {
+            background: #e55b17;
+            color: white;
+        }
+
+        /* INPUT */
+        .form-control {
+            border-radius: 6px;
+        }
+
+        /* ADDRESS BOX */
+        .address-card {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px;
+            background: #fafafa;
+        }
+
+        .address-card:hover {
+            border-color: #2874f0;
+        }
+
     </style>
 </head>
 
@@ -41,19 +74,19 @@
     <a href="{% url 'dashboard' %}" class="navbar-brand">🛒 MyStore</a>
 
     <div>
-        <a href="{% url 'cart' %}" class="btn btn-light me-2">Cart</a>
-        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        <a href="{% url 'cart' %}" class="btn btn-light btn-sm me-2">Cart</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Logout</a>
     </div>
 </nav>
 
-<div class="container mt-5">
+<div class="container mt-4">
 
 <div class="row">
 
     <!-- ORDER SUMMARY -->
     <div class="col-md-6">
-        <div class="card shadow p-4">
-            <h4 class="mb-3">Order Summary</h4>
+        <div class="card shadow-sm p-4">
+            <h5 class="mb-3">Order Summary</h5>
 
             <table class="table">
                 <tr>
@@ -79,19 +112,19 @@
 
     <!-- DELIVERY DETAILS -->
     <div class="col-md-6">
-        <div class="card shadow p-4">
-            <h4 class="mb-3">Delivery Details</h4>
+        <div class="card shadow-sm p-4">
+            <h5 class="mb-3">Delivery Details</h5>
 
             <form method="POST">
                 {% csrf_token %}
 
-                <!--  SAVED ADDRESSES -->
+                <!-- SAVED ADDRESSES -->
                 {% if addresses %}
                 <h6 class="mb-2">Saved Addresses</h6>
 
                 {% for addr in addresses %}
-                <div class="card p-2 mb-2">
-                    <label>
+                <div class="address-card mb-2">
+                    <label style="cursor:pointer;">
                         <input type="radio" name="selected_address"
                         value="{{ addr.id }}"
                         onclick="fillAddress('{{ addr.address }}','{{ addr.phone }}','{{ addr.pincode }}','{{ addr.city }}','{{ addr.state }}')">
@@ -110,14 +143,14 @@
                 <!-- Address -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Address</label>
-                    <textarea id="address" name="address" class="form-control shadow-sm" rows="3"
+                    <textarea id="address" name="address" class="form-control" rows="3"
                         placeholder="House No, Street, Area" required></textarea>
                 </div>
 
                 <!-- Phone -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Phone Number</label>
-                    <input id="phone" type="text" name="phone" class="form-control shadow-sm"
+                    <input id="phone" type="text" name="phone" class="form-control"
                     placeholder="Enter mobile number" required>
                 </div>
 
@@ -125,17 +158,17 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-semibold">Pincode</label>
-                        <input id="pincode" type="text" name="pincode" class="form-control shadow-sm" required>
+                        <input id="pincode" type="text" name="pincode" class="form-control" required>
                     </div>
 
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-semibold">City</label>
-                        <input id="city" type="text" name="city" class="form-control shadow-sm" required>
+                        <input id="city" type="text" name="city" class="form-control" required>
                     </div>
 
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-semibold">State</label>
-                        <input id="state" type="text" name="state" class="form-control shadow-sm" required>
+                        <input id="state" type="text" name="state" class="form-control" required>
                     </div>
                 </div>
 
@@ -165,7 +198,7 @@
 </div>
 </div>
 
-<!--  AUTO-FILL  -->
+<!-- AUTO-FILL -->
 <script>
 function fillAddress(address, phone, pincode, city, state) {
     document.getElementById("address").value = address;

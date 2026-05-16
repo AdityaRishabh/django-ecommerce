@@ -7,139 +7,78 @@
 
     <style>
         body {
-            background: #f4f6f9;
+            background: #f1f3f6;
+            font-family: Arial, sans-serif;
         }
 
+        /* NAVBAR */
         .navbar {
-            background: linear-gradient(90deg, #4e54c8, #8f94fb);
+            background: #2874f0;
+            padding: 10px 20px;
         }
 
+        .navbar-brand {
+            font-weight: bold;
+            color: white;
+        }
+
+        .search-bar {
+            width: 50%;
+        }
+
+        .search-bar input {
+            border-radius: 2px;
+        }
+
+        .nav-btn {
+            color: white;
+            border: none;
+            background: transparent;
+            margin-left: 10px;
+        }
+
+        /* PRODUCT CARD */
         .card {
-            border-radius: 15px;
+            border: none;
+            border-radius: 8px;
+            background: white;
             transition: 0.3s;
             height: 100%;
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: scale(1.03);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
 
         .product-img {
-            height: 220px;
-            object-fit: cover;
-            border-radius: 10px;
+            height: 200px;
+            object-fit: contain;
         }
 
         .price {
+            color: #388e3c;
             font-weight: bold;
-            color: #28a745;
-            font-size: 18px;
         }
 
-        .btn-custom {
-            background: #4e54c8;
+        .btn-cart {
+            background: #ff9f00;
+            border: none;
             color: white;
-            border-radius: 10px;
+            font-weight: 500;
         }
 
-        .btn-custom:hover {
-            background: #3d42a5;
-            color: white;
+        .btn-cart:hover {
+            background: #fb8c00;
         }
 
-        .description {
+        .container-products {
+            margin-top: 20px;
+        }
+
+        .title {
             font-size: 14px;
-            color: #666;
             min-height: 40px;
-        }
-
-        .card-title {
-            min-height: 50px;
-        }
-
-        /* CHATBOT */
-
-        .chatbot-toggle {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            background: #4e54c8;
-            color: white;
-            font-size: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            z-index: 999;
-        }
-
-        .chatbot-box {
-            position: fixed;
-            bottom: 100px;
-            right: 25px;
-            width: 360px;
-            height: 500px;
-            background: white;
-            border-radius: 15px;
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            z-index: 999;
-        }
-
-        .chatbot-header {
-            background: linear-gradient(90deg, #4e54c8, #8f94fb);
-            color: white;
-            padding: 15px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .chatbot-messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            background: #f8f9fa;
-        }
-
-        .user-message {
-            background: #4e54c8;
-            color: white;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            text-align: right;
-        }
-
-        .bot-message {
-            background: #e9ecef;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-
-        .chatbot-input {
-            display: flex;
-            border-top: 1px solid #ddd;
-        }
-
-        .chatbot-input input {
-            flex: 1;
-            border: none;
-            padding: 15px;
-            outline: none;
-        }
-
-        .chatbot-input button {
-            border: none;
-            background: #4e54c8;
-            color: white;
-            padding: 15px 20px;
         }
     </style>
 </head>
@@ -147,90 +86,63 @@
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark px-4">
-    <a class="navbar-brand fw-bold" href="#">🛒 MyStore</a>
+<nav class="navbar d-flex align-items-center">
 
-    <div class="ms-auto">
-        <a href="{% url 'orders' %}" class="btn btn-light me-2">Orders</a>
-        <a href="{% url 'cart' %}" class="btn btn-light me-2">Cart</a>
-        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+    <a class="navbar-brand" href="#">🛒 MyStore</a>
+
+    <!-- SEARCH -->
+    <form method="GET" class="d-flex search-bar mx-auto">
+        <input type="text" name="q" value="{{ query }}" 
+            class="form-control" placeholder="Search for products...">
+        <button class="btn btn-light ms-2">Search</button>
+    </form>
+
+    <!-- BUTTONS -->
+    <div>
+        <a href="{% url 'orders' %}" class="btn btn-light btn-sm">Orders</a>
+        <a href="{% url 'cart' %}" class="btn btn-light btn-sm">Cart</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Logout</a>
     </div>
+
 </nav>
 
-<!-- HEADER -->
-<div class="container mt-4">
-    <h3 class="fw-bold">
-        Welcome, {{ request.user.email }} 👋
-    </h3>
-
-    <p class="text-muted">
-        Browse and shop your favorite products
-    </p>
-</div>
-
-<!-- SEARCH BAR -->
-<div class="container mt-3">
-    <form method="GET" class="d-flex">
-
-        <input type="text"
-            name="q"
-            value="{{ query }}"
-            class="form-control me-2"
-            placeholder="Search products...">
-
-        <button class="btn btn-primary">
-            Search
-        </button>
-
-    </form>
-</div>
-
 <!-- PRODUCTS -->
-<div class="container mt-4">
+<div class="container container-products">
+
     <div class="row">
 
         {% if products %}
 
             {% for product in products %}
 
-            <div class="col-md-3 mb-4">
+            <div class="col-md-3 col-sm-6 mb-4">
 
-                <div class="card shadow-sm p-3">
+                <div class="card p-3 text-center">
 
-                {% if product.image %}
-    <img src="{{ product.image.url }}"
-        class="product-img w-100 mb-3"
-        onerror="this.src='https://via.placeholder.com/300'">
+                    <!-- IMAGE -->
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="product-img w-100 mb-2">
+                    {% elif product.image_url %}
+                        <img src="{{ product.image_url }}" class="product-img w-100 mb-2"
+                            onerror="this.src='https://picsum.photos/300'">
+                    {% else %}
+                        <img src="https://picsum.photos/300" class="product-img w-100 mb-2">
+                    {% endif %}
 
-{% elif product.image_url %}
-    <img src="{{ product.image_url }}"
-        class="product-img w-100 mb-3"
-        referrerpolicy="no-referrer"
-        onerror="this.src='https://picsum.photos/300'">
+                    <!-- NAME -->
+                    <a href="{% url 'product_detail' product.id %}" class="text-decoration-none text-dark">
+    <p class="title">{{ product.name }}</p>
+</a>
 
-{% else %}
-    <img src="https://via.placeholder.com/300"
-        class="product-img w-100 mb-3">
-{% endif %}
+                    <!-- PRICE -->
+                    <p class="price">₹ {{ product.price }}</p>
 
-                    <h6 class="fw-bold card-title">
-                        {{ product.name }}
-                    </h6>
+                    <!-- STOCK -->
+                    <p class="text-muted">Stock: {{ product.stock }}</p>
 
-                    <p class="description">
-                        {{ product.description|default:"No description available"|truncatechars:60 }}
-                    </p>
-
-                    <p class="price">
-                        ₹ {{ product.price }}
-                    </p>
-
-                    <p class="text-muted">
-                        Stock: {{ product.stock }}
-                    </p>
-
-                    <a href="{% url 'add_to_cart' product.id %}"
-                    class="btn btn-custom w-100">
+                    <!-- BUTTON -->
+                    <a href="{% url 'add_to_cart' product.id %}" 
+                    class="btn btn-cart w-100">
                         Add to Cart
                     </a>
 
@@ -242,20 +154,20 @@
 
         {% else %}
 
-            <p class="text-center mt-4 text-muted">
+            <p class="text-center mt-5 text-muted">
                 No products found
             </p>
 
         {% endif %}
 
     </div>
+
 </div>
 
-<!-- AI CHATBOT -->
 
-<div class="chatbot-toggle" onclick="toggleChatbot()">
-    🤖
-</div>
+<!-- 🤖 AI CHATBOT -->
+
+<div class="chatbot-toggle" onclick="toggleChatbot()">🤖</div>
 
 <div class="chatbot-box" id="chatbotBox">
 
@@ -264,75 +176,124 @@
     </div>
 
     <div class="chatbot-messages" id="chatMessages">
-
         <div class="bot-message">
-            Hi 👋 Ask me anything about shopping.
+            Hi 👋 Ask me about products!
         </div>
-
     </div>
 
     <div class="chatbot-input">
-
-        <input type="text"
-               id="userQuestion"
-               placeholder="Ask AI...">
-
-        <button onclick="askAI()">
-            Send
-        </button>
-
+        <input type="text" id="userQuestion" placeholder="Ask AI...">
+        <button onclick="askAI()">Send</button>
     </div>
 
 </div>
 
+<style>
+.chatbot-toggle {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: #2874f0;
+    color: white;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 999;
+}
+
+.chatbot-box {
+    position: fixed;
+    bottom: 100px;
+    right: 25px;
+    width: 350px;
+    height: 450px;
+    background: white;
+    border-radius: 10px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 999;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.chatbot-header {
+    background: #2874f0;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.chatbot-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.user-message {
+    background: #2874f0;
+    color: white;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    text-align: right;
+}
+
+.bot-message {
+    background: #eee;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.chatbot-input {
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+
+.chatbot-input input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+}
+
+.chatbot-input button {
+    background: #fb641b;
+    color: white;
+    border: none;
+    padding: 10px;
+}
+</style>
+
 <script>
-
 function toggleChatbot() {
-
     let box = document.getElementById('chatbotBox');
-
-    if (box.style.display === 'flex') {
-        box.style.display = 'none';
-    }
-    else {
-        box.style.display = 'flex';
-    }
+    box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
 }
 
 async function askAI() {
 
     let input = document.getElementById('userQuestion');
-
     let question = input.value;
 
-    if (question.trim() === '') {
-        return;
-    }
+    if (!question.trim()) return;
 
     let messages = document.getElementById('chatMessages');
 
-    messages.innerHTML += `
-        <div class="user-message">
-            ${question}
-        </div>
-    `;
-
+    messages.innerHTML += `<div class="user-message">${question}</div>`;
     input.value = '';
 
-    let response = await fetch(`/ai-chat/?q=${question}`);
+    let res = await fetch(`/ai-chat/?q=${question}`);
+    let data = await res.json();
 
-    let data = await response.json();
-
-    messages.innerHTML += `
-        <div class="bot-message">
-            ${data.answer}
-        </div>
-    `;
+    messages.innerHTML += `<div class="bot-message">${data.answer}</div>`;
 
     messages.scrollTop = messages.scrollHeight;
 }
-
 </script>
-
 </body>
 </html>

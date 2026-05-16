@@ -11,30 +11,35 @@
     <style>
         body {
             height: 100vh;
-            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            background: linear-gradient(135deg, #2874f0, #6a93ff);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: Arial, sans-serif;
         }
 
         .signup-card {
             width: 420px;
             padding: 30px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            background: white;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            color: white;
         }
 
-        .signup-card h3 {
-            font-weight: bold;
+        .signup-title {
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         .form-control {
-            border-radius: 10px;
+            border-radius: 8px;
             padding-left: 40px;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 2px rgba(40,116,240,0.2);
+            border-color: #2874f0;
         }
 
         .input-group {
@@ -46,29 +51,41 @@
             top: 50%;
             left: 12px;
             transform: translateY(-50%);
-            color: #555;
+            color: #888;
         }
 
         .btn-custom {
-            background: #fff;
-            color: #4e54c8;
-            font-weight: bold;
-            border-radius: 10px;
-            transition: 0.3s;
+            background: #fb641b;
+            color: white;
+            border-radius: 8px;
+            font-weight: 500;
+            border: none;
+            padding: 10px;
         }
 
         .btn-custom:hover {
-            background: #4e54c8;
-            color: white;
+            background: #e55b17;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
         }
 
         .login-link a {
-            color: #fff;
+            color: #2874f0;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
             text-decoration: underline;
         }
 
         .alert {
-            border-radius: 10px;
+            border-radius: 8px;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -77,12 +94,12 @@
 
 <div class="signup-card">
 
-    <h3 class="text-center mb-4">📝 Create Account</h3>
+    <h3 class="signup-title">Create Your Account 🛍</h3>
 
     <!-- Messages -->
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-danger text-dark">
+            <div class="alert alert-danger">
                 {{ message }}
             </div>
         {% endfor %}
@@ -116,13 +133,15 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-custom w-100">Signup</button>
+        <button type="submit" class="btn btn-custom w-100">
+            Signup
+        </button>
     </form>
 
-    <p class="text-center mt-3 login-link">
+    <div class="login-link">
         Already have an account? 
         <a href="{% url 'login' %}">Login</a>
-    </p>
+    </div>
 
 </div>
 

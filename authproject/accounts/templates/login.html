@@ -8,27 +8,69 @@
     <style>
         body {
             height: 100vh;
-            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            background: linear-gradient(135deg, #2874f0, #6a93ff);
             display: flex;
             justify-content: center;
             align-items: center;
+            font-family: Arial, sans-serif;
         }
 
         .login-card {
-            width: 350px;
-            padding: 25px;
-            border-radius: 15px;
+            width: 370px;
+            padding: 30px;
+            border-radius: 12px;
             background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .login-title {
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 2px rgba(40,116,240,0.2);
+            border-color: #2874f0;
+        }
+
+        .btn-login {
+            background: #fb641b;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .btn-login:hover {
+            background: #e55b17;
         }
 
         .signup-text {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 18px;
+            font-size: 14px;
         }
 
         .signup-text a {
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            color: #2874f0;
+        }
+
+        .signup-text a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 8px;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -37,7 +79,7 @@
 
 <div class="login-card">
 
-    <h3 class="text-center mb-3">Login</h3>
+    <h3 class="login-title">Welcome Back 👋</h3>
 
     {% if messages %}
         {% for message in messages %}
@@ -50,11 +92,13 @@
     <form method="POST">
         {% csrf_token %}
 
-        <input type="text" name="email" class="form-control mb-3" placeholder="Email" required>
+        <input type="text" name="email" class="form-control mb-3" placeholder="Enter your email" required>
 
-        <input type="password" name="password" class="form-control mb-3" placeholder="Password" required>
+        <input type="password" name="password" class="form-control mb-3" placeholder="Enter your password" required>
 
-        <button type="submit" class="btn btn-primary w-100">Login</button>
+        <button type="submit" class="btn btn-login w-100">
+            Login
+        </button>
     </form>
 
     <!-- SIGNUP LINK -->

@@ -100,18 +100,36 @@ def logout_view(request):
 
 # DASHBOARD
 
+from django.db.models import Q
+
 @login_required
 def dashboard_view(request):
+
     query = request.GET.get('q')
 
     if query:
-        products = Product.objects.filter(name__icontains=query)
+        products = Product.objects.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query) |
+            Q(category__icontains=query)
+        )
     else:
         products = Product.objects.all()
-        return render(request, 'dashboard.html', {
+
+    return render(request, 'dashboard.html', {
         'products': products,
         'query': query,
+    })
+    
+# product detail
 
+@login_required
+def product_detail(request, product_id):
+
+    product = get_object_or_404(Product, id=product_id)
+
+    return render(request, 'product_detail.html', {
+        'product': product
     })
 
 #  CART (WEB)

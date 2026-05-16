@@ -5,38 +5,69 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        body { background: #f4f6f9; }
+        body {
+            background: #f1f3f6;
+            font-family: Arial, sans-serif;
+        }
 
+        /* NAVBAR */
         .navbar {
-            background: linear-gradient(90deg, #4e54c8, #8f94fb);
+            background: #2874f0;
+            padding: 10px 20px;
         }
 
-        .product-img {
-            height: 60px;
-            width: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .price {
-            color: green;
+        .navbar-brand {
             font-weight: bold;
-        }
-
-        .qty-btn {
-            padding: 4px 10px;
-        }
-
-        .table th {
-            background: #4e54c8;
             color: white;
         }
 
+        /* CARD */
+        .cart-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        /* IMAGE */
+        .product-img {
+            height: 70px;
+            width: 70px;
+            object-fit: contain;
+        }
+
+        /* PRICE */
+        .price {
+            color: #388e3c;
+            font-weight: bold;
+        }
+
+        /* QTY BUTTON */
+        .qty-btn {
+            padding: 5px 10px;
+        }
+
+        /* TABLE */
+        .table th {
+            background: #2874f0;
+            color: white;
+        }
+
+        /* TOTAL BOX */
         .total-box {
             background: white;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             text-align: right;
+        }
+
+        .btn-cart {
+            background: #ff9f00;
+            color: white;
+            border: none;
+        }
+
+        .btn-cart:hover {
+            background: #fb8c00;
         }
     </style>
 </head>
@@ -44,28 +75,28 @@
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-dark px-4">
-    <a href="{% url 'dashboard' %}" class="navbar-brand">My Store</a>
+<nav class="navbar navbar-dark">
+    <a href="{% url 'dashboard' %}" class="navbar-brand">🛒 MyStore</a>
 
     <div>
-        <a href="{% url 'dashboard' %}" class="btn btn-light me-2">Dashboard</a>
-        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        <a href="{% url 'dashboard' %}" class="btn btn-light btn-sm me-2">Dashboard</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Logout</a>
     </div>
 </nav>
 
-<div class="container mt-5">
+<div class="container mt-4">
 
-<h3 class="mb-4"> Your Cart</h3>
+<h4 class="mb-3">🛍 Your Cart</h4>
 
-<div class="card shadow p-4">
+<div class="cart-card shadow-sm">
 
 <table class="table align-middle">
     <thead>
         <tr>
-            <th>Image</th>
             <th>Product</th>
+            <th>Name</th>
             <th>Quantity</th>
-            <th>Subtotal</th>
+            <th>Price</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -75,9 +106,12 @@
         <tr>
             <td>
                 {% if item.product.image %}
-                <img src="{{ item.product.image.url }}" class="product-img">
+                    <img src="{{ item.product.image.url }}" class="product-img">
+                {% elif item.product.image_url %}
+                    <img src="{{ item.product.image_url }}" class="product-img"
+                         onerror="this.src='https://picsum.photos/100'">
                 {% else %}
-                <img src="https://via.placeholder.com/60" class="product-img">
+                    <img src="https://picsum.photos/100" class="product-img">
                 {% endif %}
             </td>
 
@@ -89,9 +123,7 @@
                 <a href="{% url 'increase' item.id %}" class="btn btn-success btn-sm qty-btn">+</a>
             </td>
 
-            <td class="price">
-                ₹ {{ item.subtotal }}
-            </td>
+            <td class="price">₹ {{ item.subtotal }}</td>
 
             <td>
                 <a href="{% url 'remove' item.id %}" class="btn btn-dark btn-sm">Remove</a>
@@ -99,7 +131,7 @@
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5" class="text-center">Cart is empty</td>
+            <td colspan="5" class="text-center text-muted">Cart is empty</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -108,13 +140,18 @@
 </div>
 
 <!-- TOTAL -->
-<div class="total-box mt-4 shadow">
+<div class="total-box mt-4 shadow-sm">
+
     <h4>Total: <span class="price">₹ {{ total }}</span></h4>
 
-    <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-2">Continue Shopping</a>
-    <a href="{% url 'checkout' %}" class="btn btn-primary mt-2">
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-2">
+        Continue Shopping
+    </a>
+
+    <a href="{% url 'checkout' %}" class="btn btn-cart mt-2">
         Place Order (Cash on Delivery)
     </a>
+
 </div>
 
 </div>

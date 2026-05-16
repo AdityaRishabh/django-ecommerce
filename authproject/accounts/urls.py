@@ -38,7 +38,7 @@ urlpatterns = [
     path('order/<int:order_id>/', views.order_detail, name='order_detail'),
 
     #  PRODUCT APIs
-
+    path('product/<int:product_id>/', views.product_detail, name='product_detail'),
     path('api/products/', views.api_products, name='api_products'),
     path('api/add-product/', views.api_add_product, name='api_add_product'),
     path('api/update-product/<int:pk>/', views.api_update_product, name='api_update_product'),
